@@ -42,7 +42,34 @@ public class MemoController {
                 .stream() // memoList에서 하나씩 빼옴
                 .map(MemoResponseDto::new) // 하나씩 뺴온 걸 MemoResponseDto 생성자를 통해 MemoResponseDto로 변환
                 .toList(); // 변환된 MemoResponseDto를 리스트에 저장
-        
+
         return responseList;
+    }
+
+    // 메모 수정
+    @PutMapping("/memos/{id}")
+    public Long updateMemo(@PathVariable Long id, @RequestBody MemoRequestDto requestDto) {
+        // 해당 메모가 DB에 존재하는지 확인
+        if (memoList.containsKey(id)) {
+            Memo memo = memoList.get(id); // 해당 메모 가져오기
+            memo.update(requestDto); // memo 수정
+            return memo.getId();
+
+        } else {
+            throw new IllegalArgumentException("선택한 메모는 존재하지 않습니다.");
+        }
+    }
+
+    // 메모 삭제
+    @DeleteMapping("/memos/{id}")
+    public Long deleteMemo(@PathVariable Long id) {
+        // 해당 메모가 DB에 존재하는지 확인
+        if (memoList.containsKey(id)) {
+            memoList.remove(id);  // 해당 메모 삭제하기
+            return id;
+
+        } else {
+            throw new IllegalArgumentException("선택한 메모는 존재하지 않습니다.");
+        }
     }
 }
